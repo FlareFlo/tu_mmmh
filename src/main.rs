@@ -21,6 +21,8 @@ async fn main() {
 			println!("{}", meal);
 		}
 	}
+
+	let serenity = serenity::client::ClientBuilder::new()
 }
 
 pub fn format_today() -> String {
