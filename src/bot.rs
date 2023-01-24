@@ -2,8 +2,11 @@ use serenity::async_trait;
 use serenity::framework::standard::macros::{command, group};
 use serenity::framework::standard::{StandardFramework, CommandResult};
 use serenity::prelude::*;
-use serenity::model::channel::Message;
+use serenity::model::channel::{Embed, Message};
 use serenity::model::gateway::Ready;
+use serenity::model::id::EmojiId;
+use serenity::model::mention::Mention::Emoji;
+use serenity::utils::MessageBuilder;
 use crate::get_menu;
 
 #[group]
@@ -18,8 +21,7 @@ struct Handler;
 
 #[async_trait]
 impl EventHandler for Handler {
-	async fn message(&self, ctx: Context, msg: Message) {
-	}
+	async fn message(&self, ctx: Context, msg: Message) {}
 
 	async fn ready(&self, _: Context, ready: Ready) {
 		println!("{} is connected!", ready.user.name);
@@ -59,15 +61,22 @@ async fn pizza(ctx: &Context, msg: &Message) -> CommandResult {
 		.build().unwrap();
 
 	let menu = get_menu(&client).await;
+	let now = chrono::offset::Local::now().naive_local();
 
-	let mut foods =  vec![];
+	let mut foods = vec![];
 	for a in menu.as_array().unwrap() {
 		let meal = a.get("name").unwrap().as_str().unwrap();
 		if meal.contains("Pizza") {
 			foods.push(meal);
 		}
 	}
-	msg.reply(ctx, foods.join("\n")).await?;
+
+	let embed = Embed::fake(|e|
+		e.title("Pizza this wednesday")
+		 .footer(|f| f.text(now.format("%Y-%m-%d %H:%M:%S")))
+	);
+
+	msg.reply_ping(ctx, embed).await?;
 
 	Ok(())
 }
