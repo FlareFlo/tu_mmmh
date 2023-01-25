@@ -65,9 +65,10 @@ async fn pizza(ctx: &Context, msg: &Message) -> CommandResult {
 
 	let mut foods = vec![];
 	for a in menu.as_array().unwrap() {
-		let meal = a.get("name").unwrap().as_str().unwrap();
+		dbg!(a);
+		let meal = a.pointer("/lane/name").unwrap().as_str().unwrap();
 		if meal.contains("Pizza") {
-			foods.push(meal);
+			foods.push( a.get("name").unwrap().as_str().unwrap());
 		}
 	}
 
@@ -76,7 +77,7 @@ async fn pizza(ctx: &Context, msg: &Message) -> CommandResult {
 		 .footer(|f| f.text(now.format("%Y-%m-%d %H:%M:%S")))
 	);
 
-	msg.reply_ping(ctx, embed).await?;
+	msg.reply_ping(ctx, foods.join("\n")).await?;
 
 	Ok(())
 }
