@@ -65,7 +65,6 @@ async fn pizza(ctx: &Context, msg: &Message) -> CommandResult {
 
 	let mut foods = vec![];
 	for a in menu.as_array().unwrap() {
-		dbg!(a);
 		let meal = a.pointer("/lane/name").unwrap().as_str().unwrap();
 		if meal.contains("Pizza") {
 			foods.push( a.get("name").unwrap().as_str().unwrap());
