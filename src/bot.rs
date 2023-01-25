@@ -1,12 +1,13 @@
 use serenity::async_trait;
+use serenity::framework::standard::{CommandResult, StandardFramework};
 use serenity::framework::standard::macros::{command, group};
-use serenity::framework::standard::{StandardFramework, CommandResult};
-use serenity::prelude::*;
-use serenity::model::channel::{Embed, Message};
+use serenity::model::channel::{Embed, Message, MessageReference};
 use serenity::model::gateway::Ready;
 use serenity::model::id::EmojiId;
 use serenity::model::mention::Mention::Emoji;
+use serenity::prelude::*;
 use serenity::utils::MessageBuilder;
+
 use crate::get_menu;
 
 #[group]
@@ -67,16 +68,22 @@ async fn pizza(ctx: &Context, msg: &Message) -> CommandResult {
 	for a in menu.as_array().unwrap() {
 		let meal = a.pointer("/lane/name").unwrap().as_str().unwrap();
 		if meal.contains("Pizza") {
-			foods.push( a.get("name").unwrap().as_str().unwrap());
+			foods.push(a.get("name").unwrap().as_str().unwrap());
 		}
 	}
 
-	let embed = Embed::fake(|e|
-		e.title("Pizza this wednesday")
-		 .footer(|f| f.text(now.format("%Y-%m-%d %H:%M:%S")))
-	);
+	let embeds = vec![];
 
-	msg.reply_ping(ctx, foods.join("\n")).await?;
+	for food in foods {
+
+	}
+
+
+	msg.channel_id.send_message(ctx, |m| {
+		m.content("")
+		 .set_embeds(embeds)
+		 .reference_message(msg)
+	}).await.unwrap();
 
 	Ok(())
 }
